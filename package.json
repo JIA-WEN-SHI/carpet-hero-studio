@@ -1,0 +1,41 @@
+{
+  "name": "carpet-hero-studio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:api": "tsx watch server/index.ts",
+    "dev:full": "concurrently -k -n api,web \"pnpm dev:api\" \"pnpm dev\"",
+    "build": "tsc -b && vite build",
+    "build:api": "tsc -p tsconfig.server.json",
+    "start:api": "tsx server/index.ts",
+    "seed:scenes": "tsx scripts/seed-scenes.ts",
+    "seed:scenes:render": "tsx scripts/render-scene-seeds.ts",
+    "test": "vitest run",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@supabase/supabase-js": "^2.110.0",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.9.0",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sharp": "^0.35.3",
+    "undici": "^8.7.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^10.0.3",
+    "tsx": "^4.23.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  }
+}
