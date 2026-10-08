@@ -4,7 +4,7 @@
 
 把商品素材、场景参考与首图制作组织成一条生产流程。
 
-**先查看：** [项目案例](https://jia-wen-shi.github.io/#case-carpet) · [作品集首页](https://jia-wen-shi.github.io/)
+**先查看：** [直接演示](https://jia-wen-shi.github.io/demos/carpet/) · [项目案例](https://jia-wen-shi.github.io/#case-carpet) · [作品集首页](https://jia-wen-shi.github.io/)
 
 无需登录 GitHub 即可浏览公开源码。案例页和公共原型不需要安装环境或填写模型密钥。
 
@@ -18,13 +18,23 @@
 
 已形成本地产品结构和工作台。尚未通过真实用户业务案例验证，当前生成效果未在本轮重新验收。
 
-公共入口为流程与界面的案例展示，未公开运行依赖密钥、数据库或本机服务的完整后端。
+公开演示可直接操作现有前端：示例素材 · 预置插画与模拟生成 · 调整参数、提示词和交付流程。演示使用合成数据，不代表真实业务或实时模型效果。完整后端仍需本地服务与自己的配置。
 
 ## 源码结构
 
 `src/ · server/ · scripts/ · supabase/ · seed/`
 
 这是当前工作区源码的发布快照，未附带旧 Git 历史。真实密钥、数据库、浏览器会话、日志、客户原始金融材料和依赖缓存不在仓库内。
+
+## 无后台演示
+
+```bash
+npx pnpm@10 install --frozen-lockfile
+npx pnpm@10 dev:demo
+npx pnpm@10 build:demo
+```
+
+静态产物在 `dist-demo/`。公开演示的图片是已有代码生成的插画，上传文件不离开浏览器。
 
 ## 本地运行
 

@@ -33,6 +33,7 @@ import {
   ZoomOut,
 } from "lucide-react";
 import { CarpetArt, RoomScene } from "./art";
+import { demoMode, demoProduct, downloadDemoScene } from "./demo";
 import { bootstrapProject, listGenerationResults, renderPrompt } from "./features/scene-generation/api";
 import { PromptEditor } from "./features/scene-generation/PromptEditor";
 import { initialPromptState, reducePromptState } from "./features/scene-generation/prompt-state";
@@ -124,7 +125,7 @@ function Topbar({
         )}
       </div>
       <div className="topbar-actions">
-        <span className="autosave"><CheckCircle2 size={16} /> 已自动保存 <small>14:32</small></span>
+        <span className="autosave"><CheckCircle2 size={16} /> {demoMode ? "演示会话" : "已自动保存"} <small>{demoMode ? "刷新重置" : "14:32"}</small></span>
         {onNew && <button className="button secondary" onClick={onNew}><FolderPlus size={17} /> 新建项目</button>}
         {onHistory && <button className="button secondary" onClick={onHistory}><History size={17} /> 历史版本</button>}
       </div>
@@ -313,7 +314,7 @@ function SceneStep({
   productAssetId,
   productPreviewUrl,
 }: {
-  onNext: () => void;
+  onNext: (resultUrl: string) => void;
   projectId: string;
   productAssetId: string;
   productPreviewUrl?: string;
@@ -334,6 +335,7 @@ function SceneStep({
   const [promptState, dispatchPrompt] = useReducer(reducePromptState, initialPromptState(""));
   const [promptError, setPromptError] = useState<string>();
   const [results, setResults] = useState<GenerationResultView[]>([]);
+  const [savedCandidate, setSavedCandidate] = useState<string>();
   const generation = useGenerationJob();
 
   const parameters: SceneParameters = useMemo(() => ({
@@ -406,8 +408,8 @@ function SceneStep({
         {activeResult ? <img src={activeResult.resultUrl} alt="生成的地毯场景" className="hero-scene generated-scene" /> : scenePreviewUrl ? <img src={scenePreviewUrl} alt="当前场景参考" className="hero-scene generated-scene scene-reference-preview" /> : <RoomScene variant={0} className="hero-scene" />}
         <div className="generation-status">
           {generation.status === "queued" && "任务已创建，等待生成"}
-          {generation.status === "processing" && "正在替换地毯并匹配场景光线…"}
-          {generation.status === "succeeded" && "已生成一张新候选图"}
+          {generation.status === "processing" && (demoMode ? "正在模拟生成流程…" : "正在替换地毯并匹配场景光线…")}
+          {generation.status === "succeeded" && (demoMode ? "示例候选图已就绪（预置插画）" : "已生成一张新候选图")}
           {generation.error && <span className="inline-error">{generation.error}</span>}
         </div>
         <div className="scene-candidates">
@@ -417,7 +419,7 @@ function SceneStep({
             </button>
           ))}
         </div>
-        <div className="dual-actions"><button className="button secondary" disabled={generation.isRunning} onClick={generate}><RefreshCw size={17} /> 再生成一张</button><button className="button secondary" disabled={!activeResult}><Save size={17} /> 保留此方案</button></div>
+        <div className="dual-actions"><button className="button secondary" disabled={generation.isRunning} onClick={generate}><RefreshCw size={17} /> 再生成一张</button><button className="button secondary" disabled={!activeResult} onClick={() => { if (demoMode && activeResult) setSavedCandidate(activeResult.id); }}><Save size={17} /> {activeResult && savedCandidate === activeResult.id ? "已保留此示例方案" : "保留此方案"}</button></div>
       </section>
       <aside className="panel settings-panel">
         <h2>场景设置</h2>
@@ -432,13 +434,13 @@ function SceneStep({
         <PromptEditor templateId={templateId} text={promptState.text} dirty={promptState.dirty} onEdit={(value) => dispatchPrompt({ type: "edit", value })} onReset={() => dispatchPrompt({ type: "reset", value: templatePrompt })} />
         {promptError && <small className="inline-error">{promptError}</small>}
         <button className="button primary wide" disabled={!sceneAssetId || !promptState.text.trim() || generation.isRunning} onClick={generate}><WandSparkles size={17} /> {generation.isRunning ? "生成中" : "生成场景"}</button>
-        <button className="button primary wide" disabled={!activeResult} onClick={onNext}>采用此方案，下一步 <ArrowRight size={17} /></button>
+        <button className="button primary wide" disabled={!activeResult} onClick={() => activeResult && onNext(activeResult.resultUrl)}>采用此方案，下一步 <ArrowRight size={17} /></button>
       </aside>
     </div>
   );
 }
 
-function AdjustStep({ onComplete }: { onComplete: () => void }) {
+function AdjustStep({ onComplete, resultUrl }: { onComplete: () => void; resultUrl?: string }) {
   const [candidate, setCandidate] = useState(0);
   const [scale, setScale] = useState(65);
   const [space, setSpace] = useState(40);
@@ -464,7 +466,7 @@ function AdjustStep({ onComplete }: { onComplete: () => void }) {
           <button className="active"><Move size={17} /> 移动产品</button><button><Maximize2 size={17} /> 调整大小</button><button><Crop size={17} /> 裁剪</button><button><WandSparkles size={17} /> 局部修改</button><i /><button><RotateCcw size={17} /></button>
         </div>
         <div className="canvas-wrap" style={{ filter: `brightness(${100 + brightness}%)` }}>
-          <RoomScene variant={candidate} className="adjust-scene" />
+          {demoMode && resultUrl && candidate === 0 ? <img src={resultUrl} className="adjust-scene" alt="采用的示例场景" /> : <RoomScene variant={candidate} className="adjust-scene" />}
           <div className="safe-area" style={{ inset: `${Math.max(4, 14 - space / 5)}%` }}>
             <span>1:1 安全区</span>
             <i className="handle nw" /><i className="handle ne" /><i className="handle sw" /><i className="handle se" />
@@ -489,8 +491,8 @@ function AdjustStep({ onComplete }: { onComplete: () => void }) {
         <Field label="修改说明"><textarea defaultValue="优化地毯边缘清晰度，调整光线更柔和。" /></Field>
         <div className="dual-actions"><button className="button secondary">重新生成</button><button className="button secondary">保存为备选</button></div>
         <div className="delivery-box">
-          <div><RoomScene variant={candidate} /><span><strong>首图交付（最终版本）</strong><small>final_A_v3.jpg</small><small>1600 × 1600 · JPG</small></span></div>
-          <button className="button primary wide" onClick={() => { setCompleted(true); onComplete(); }}><CheckCircle2 size={17} /> {completed ? "首图已保存" : "完成并保存首图"}</button>
+          <div>{demoMode && resultUrl && candidate === 0 ? <img src={resultUrl} alt="采用的示例场景" /> : <RoomScene variant={candidate} />}<span><strong>首图交付（最终版本）</strong><small>{demoMode ? "示例插画 · 非真实生成结果" : "final_A_v3.jpg"}</small><small>{demoMode ? "体验交付流程" : "1600 × 1600 · JPG"}</small></span></div>
+          <button className="button primary wide" onClick={() => { setCompleted(true); onComplete(); }}><CheckCircle2 size={17} /> {demoMode ? (completed ? "演示流程已完成" : "完成演示流程") : (completed ? "首图已保存" : "完成并保存首图")}</button>
         </div>
       </aside>
     </div>
@@ -500,9 +502,10 @@ function AdjustStep({ onComplete }: { onComplete: () => void }) {
 function Workbench({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState<WorkbenchStep>("import");
   const [projectId, setProjectId] = useState<string>();
-  const [productAssetId, setProductAssetId] = useState<string>();
-  const [productPreviewUrl, setProductPreviewUrl] = useState<string>();
+  const [productAssetId, setProductAssetId] = useState<string | undefined>(demoMode ? "demo-product" : undefined);
+  const [productPreviewUrl, setProductPreviewUrl] = useState<string | undefined>(demoMode ? demoProduct : undefined);
   const [setupError, setSetupError] = useState<string>();
+  const [adoptedResult, setAdoptedResult] = useState<string>();
 
   useEffect(() => {
     bootstrapProject()
@@ -515,6 +518,7 @@ function Workbench({ onComplete }: { onComplete: () => void }) {
       <Topbar title="首图工作台" onNew={() => setStep("import")} onHistory={() => alert("已打开历史版本：V1、V2、V3")} />
       <main className="page workbench-page">
         <Stepper step={step} setStep={setStep} />
+        {demoMode && <div className="info-callout">公开演示 · 已载入示例地毯。可体验导入 → 处理 → 场景参数与提示词 → 采用方案 → 首图交付。图片使用预置插画，生成过程为模拟；上传只在浏览器处理。</div>}
         {setupError && <div className="info-callout error-callout">{setupError}</div>}
         {step === "import" && <ImportStep
           onNext={() => setStep(getNextStep(step))}
@@ -528,15 +532,15 @@ function Workbench({ onComplete }: { onComplete: () => void }) {
         />}
         {step === "process" && <ProcessStep onNext={() => setStep(getNextStep(step))} />}
         {step === "scene" && projectId && productAssetId && <SceneStep
-          onNext={() => setStep(getNextStep(step))}
+          onNext={(resultUrl) => { setAdoptedResult(resultUrl); setStep(getNextStep(step)); }}
           projectId={projectId}
           productAssetId={productAssetId}
           productPreviewUrl={productPreviewUrl}
         />}
-        {step === "adjust" && <AdjustStep onComplete={onComplete} />}
+        {step === "adjust" && <AdjustStep onComplete={onComplete} resultUrl={adoptedResult} />}
         <div className="step-footer">
           <button className="text-button" disabled={step === "import"} onClick={() => setStep(getPreviousStep(step))}><ArrowLeft size={16} /> 上一步</button>
-          <span>工作进度会自动保存</span>
+          <span>{demoMode ? "演示进度仅保留在当前页面" : "工作进度会自动保存"}</span>
         </div>
       </main>
     </>
@@ -587,7 +591,7 @@ function Completed() {
           {projectCards.concat(projectCards.slice(0, 2)).map((item, index) => (
             <article className="completed-card" key={`${item.name}-${index}`} onClick={() => setSelected(index)}>
               <RoomScene variant={index} />
-              <div><span className="status 已完成">已通过</span><h3>{item.name}</h3><p>{item.style} · {item.room}</p><footer><span>2026-06-{18 + index}</span><button>下载</button></footer></div>
+              <div><span className="status 已完成">已通过</span><h3>{item.name}</h3><p>{item.style} · {item.room}</p><footer><span>2026-06-{18 + index}</span><button onClick={(event) => { if (demoMode) { event.stopPropagation(); downloadDemoScene(index); } }}>下载</button></footer></div>
             </article>
           ))}
         </div>
@@ -600,7 +604,7 @@ function Completed() {
               <div className="tags"><Tag tone="green">已通过</Tag><Tag>奶油风</Tag><Tag tone="gray">客厅</Tag></div>
               <Field label="设计方向"><div className="read-box">保留原花纹与颜色，优化奶油风客厅构图。</div></Field>
               <Field label="原商品链接"><div className="link-line">detail.tmall.com/item.htm?id=7452… <ExternalLink size={15} /></div></Field>
-              <button className="button primary wide"><CloudUpload size={17} /> 下载最终首图</button>
+              <button className="button primary wide" onClick={() => demoMode ? downloadDemoScene(selected) : undefined}><CloudUpload size={17} /> {demoMode ? "下载示例插画（SVG）" : "下载最终首图"}</button>
             </aside>
           </div>
         )}
@@ -656,7 +660,7 @@ export default function App() {
     <div className="app-shell">
       <Sidebar view={view} setView={setView} />
       <div className="app-main">
-        {view === "workbench" && <Workbench onComplete={() => showToast("首图已保存到“已完成首图”")} />}
+        {view === "workbench" && <Workbench onComplete={() => showToast(demoMode ? "演示流程已完成，可在“已完成首图”查看预置交付示例" : "首图已保存到“已完成首图”")} />}
         {view === "projects" && <Projects openWorkbench={() => setView("workbench")} />}
         {view === "completed" && <Completed />}
         {view === "scenes" && <Scenes useScene={() => setView("workbench")} />}

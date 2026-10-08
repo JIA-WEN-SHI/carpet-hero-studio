@@ -17,3 +17,7 @@ logs/
 *.sqlite*
 *.tsbuildinfo
 .playwright*/
+
+dist-demo/
+vite.config.js
+vite.config.d.ts

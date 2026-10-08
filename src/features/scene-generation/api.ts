@@ -5,6 +5,9 @@ import type {
   ScenePreset,
 } from "./types";
 
+import { demoMode, demoRequest } from "../../demo";
+const defaultRequest: typeof fetch = (input, init) => demoMode ? demoRequest(input, init) : fetch(input, init);
+
 export class ApiError extends Error {
   constructor(message: string, public readonly status: number) {
     super(message);
@@ -15,7 +18,7 @@ export class ApiError extends Error {
 async function requestJson<T>(
   url: string,
   init: RequestInit = {},
-  fetchImpl: typeof fetch = fetch,
+  fetchImpl: typeof fetch = defaultRequest,
 ): Promise<T> {
   const response = await fetchImpl(url, {
     ...init,
@@ -50,7 +53,7 @@ export function createUpload(input: {
   );
 }
 
-export async function uploadSignedFile(uploadUrl: string, file: File, fetchImpl: typeof fetch = fetch) {
+export async function uploadSignedFile(uploadUrl: string, file: File, fetchImpl: typeof fetch = defaultRequest) {
   const response = await fetchImpl(uploadUrl, {
     method: "PUT",
     headers: { "content-type": file.type, "x-upsert": "false" },

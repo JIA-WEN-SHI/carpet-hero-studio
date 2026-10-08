@@ -13,7 +13,9 @@
     "seed:scenes": "tsx scripts/seed-scenes.ts",
     "seed:scenes:render": "tsx scripts/render-scene-seeds.ts",
     "test": "vitest run",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:demo": "tsc -b && vite build --config vite.demo.config.ts",
+    "dev:demo": "vite --config vite.demo.config.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",

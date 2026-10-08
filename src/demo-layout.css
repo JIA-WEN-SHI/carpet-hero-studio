@@ -1,0 +1,37 @@
+/* Public demo adapts to portfolio embeds and smaller interview devices. */
+@media(max-width:1180px){
+html.public-demo body{min-width:0}
+html.public-demo .app-shell{flex-direction:column}
+html.public-demo .sidebar{position:relative;inset:auto;width:100%;border-bottom:1px solid var(--line)}
+html.public-demo .brand{height:54px}
+html.public-demo .nav-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 10px;gap:4px}
+html.public-demo .nav-item{height:44px;padding:0 8px;gap:6px;font-size:12px}
+html.public-demo .sidebar-bottom{display:none}
+html.public-demo .app-main{width:100%;margin-left:0}
+html.public-demo .topbar{position:relative;min-height:64px;height:auto;padding:12px 16px;gap:12px;flex-wrap:wrap}
+html.public-demo .topbar-title,html.public-demo .topbar-actions{flex-wrap:wrap;gap:10px}
+html.public-demo .page{padding:16px}
+html.public-demo .stepper{height:auto;grid-template-columns:repeat(2,minmax(0,1fr));padding:14px;gap:14px}
+html.public-demo .step{justify-content:flex-start}
+html.public-demo .work-grid{grid-template-columns:minmax(0,1fr)}
+html.public-demo .scene-grid .settings-panel{order:0}
+html.public-demo .scene-grid .scene-preview-panel{order:1}
+html.public-demo .scene-grid .product-panel{order:2}
+html.public-demo .source-strip,html.public-demo .candidate-strip{display:none}
+html.public-demo .project-grid,html.public-demo .completed-grid,html.public-demo .scene-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+html.public-demo .detail-drawer{width:min(100vw,460px)}
+html.public-demo .panel-title{flex-wrap:wrap}
+html.public-demo .delivery-box img{width:78px;height:78px;object-fit:cover;border-radius:8px}
+html.public-demo .adjust-scene{width:100%;height:100%;object-fit:cover}
+}
+@media(max-width:540px){
+html.public-demo .nav-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+html.public-demo .project-grid,html.public-demo .completed-grid,html.public-demo .scene-library-grid{grid-template-columns:minmax(0,1fr)}
+html.public-demo .project-select{max-width:100%;font-size:12px}
+html.public-demo .product-meta{grid-template-columns:minmax(0,1fr)}
+html.public-demo .process-notes{grid-template-columns:minmax(0,1fr)}
+html.public-demo .filter-bar{flex-wrap:wrap}
+html.public-demo .compare-view{height:260px}
+html.public-demo .minimal-toolbar{flex-wrap:wrap;height:auto}
+html.public-demo .panel{padding:14px}
+}
