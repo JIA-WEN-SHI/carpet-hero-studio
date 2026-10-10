@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import {
   Archive,
   ArrowLeft,
@@ -16,7 +16,6 @@ import {
   Image,
   Images,
   LayoutGrid,
-  Link2,
   Maximize2,
   Move,
   Plus,
@@ -33,14 +32,15 @@ import {
   ZoomOut,
 } from "lucide-react";
 import { CarpetArt, RoomScene } from "./art";
-import { demoMode, demoProduct, downloadDemoScene } from "./demo";
-import { bootstrapProject, listGenerationResults, renderPrompt } from "./features/scene-generation/api";
+import { DemoWorkspace } from "./features/demo/DemoWorkspace";
+import { bootstrapProject, createChatgptPrototypeJob, listGenerationResults, renderPrompt } from "./features/scene-generation/api";
 import { PromptEditor } from "./features/scene-generation/PromptEditor";
 import { initialPromptState, reducePromptState } from "./features/scene-generation/prompt-state";
 import { SceneReferences } from "./features/scene-generation/SceneReferences";
 import type { GenerationResultView, SceneParameters } from "./features/scene-generation/types";
 import { useAssetUpload } from "./features/scene-generation/useAssetUpload";
 import { useGenerationJob } from "./features/scene-generation/useGenerationJob";
+import { PRODUCT_IMAGE_ACCEPT } from "./features/scene-generation/upload-policy";
 import {
   getNextStep,
   getPreviousStep,
@@ -70,7 +70,7 @@ function Brand() {
   );
 }
 
-function Sidebar({ view, setView }: { view: View; setView: (view: View) => void }) {
+function Sidebar({ view, setView, onDemo }: { view: View; setView: (view: View) => void; onDemo: () => void }) {
   const items = [
     { id: "workbench" as const, label: "首图工作台", icon: Images },
     { id: "projects" as const, label: "选品项目", icon: Archive },
@@ -96,6 +96,7 @@ function Sidebar({ view, setView }: { view: View; setView: (view: View) => void 
         })}
       </nav>
       <div className="sidebar-bottom">
+        <button className="nav-item" onClick={onDemo}><Sparkles size={19} /><span>展示案例</span></button>
         <button className="nav-item"><CircleHelp size={19} /><span>使用帮助</span></button>
         <div className="profile">
           <div className="avatar">林</div>
@@ -125,7 +126,7 @@ function Topbar({
         )}
       </div>
       <div className="topbar-actions">
-        <span className="autosave"><CheckCircle2 size={16} /> {demoMode ? "演示会话" : "已自动保存"} <small>{demoMode ? "刷新重置" : "14:32"}</small></span>
+        <span className="autosave"><CheckCircle2 size={16} /> 已自动保存 <small>14:32</small></span>
         {onNew && <button className="button secondary" onClick={onNew}><FolderPlus size={17} /> 新建项目</button>}
         {onHistory && <button className="button secondary" onClick={onHistory}><History size={17} /> 历史版本</button>}
       </div>
@@ -133,20 +134,34 @@ function Topbar({
   );
 }
 
-function Stepper({ step, setStep }: { step: WorkbenchStep; setStep: (step: WorkbenchStep) => void }) {
+function Stepper({
+  step,
+  setStep,
+  productAssetId,
+}: {
+  step: WorkbenchStep;
+  setStep: (step: WorkbenchStep) => void;
+  productAssetId?: string;
+}) {
   const activeIndex = workbenchSteps.findIndex((item) => item.id === step);
   return (
     <div className="stepper">
-      {workbenchSteps.map((item, index) => (
-        <button
-          key={item.id}
-          className={`step ${index === activeIndex ? "active" : ""} ${index < activeIndex ? "done" : ""}`}
-          onClick={() => setStep(item.id)}
-        >
-          <span className="step-number">{index < activeIndex ? <Check size={16} /> : index + 1}</span>
-          <span><strong>{item.title}</strong><small>{item.description}</small></span>
-        </button>
-      ))}
+      {workbenchSteps.map((item, index) => {
+        const locked = index > 0 && !productAssetId;
+        return (
+          <button
+            key={item.id}
+            className={`step ${index === activeIndex ? "active" : ""} ${index < activeIndex ? "done" : ""}`}
+            disabled={locked}
+            onClick={() => {
+              if (!locked) setStep(item.id);
+            }}
+          >
+            <span className="step-number">{index < activeIndex ? <Check size={16} /> : index + 1}</span>
+            <span><strong>{item.title}</strong><small>{item.description}</small></span>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -164,7 +179,7 @@ function Field({ label, children, required = false }: { label: string; children:
   );
 }
 
-function ImportStep({
+export function ImportStep({
   onNext,
   projectId,
   productAssetId,
@@ -175,50 +190,66 @@ function ImportStep({
   projectId?: string;
   productAssetId?: string;
   productPreviewUrl?: string;
-  onProductUploaded(assetId: string, previewUrl: string): void;
+  onProductUploaded(assetId: string, file: File): void;
 }) {
-  const [source, setSource] = useState<"project" | "url" | "upload">("project");
   const [selected, setSelected] = useState(0);
+  const productFileInputRef = useRef<HTMLInputElement>(null);
   const { upload, uploading, error } = useAssetUpload();
   const uploadProduct = async (file?: File) => {
     if (!file || !projectId) return;
-    const assetId = await upload(projectId, "product", file);
-    onProductUploaded(assetId, URL.createObjectURL(file));
+    try {
+      const assetId = await upload(projectId, "product", file);
+      onProductUploaded(assetId, file);
+    } catch {
+      // The upload hook owns the sanitized inline error.
+    }
+  };
+  const openProductFilePicker = () => {
+    if (projectId && !uploading) productFileInputRef.current?.click();
+  };
+  const onProductFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    void uploadProduct(file);
   };
   return (
     <div className="work-grid import-grid">
       <section className="panel main-panel">
         <div className="panel-title"><div><h2>导入商品素材</h2><p>导入候选商品的原始图片与商品信息</p></div></div>
-        <div className="tabs">
-          {[
-            ["project", "从选品项目导入"],
-            ["url", "粘贴淘宝链接"],
-            ["upload", "本地上传"],
-          ].map(([id, label]) => (
-            <button key={id} className={source === id ? "active" : ""} onClick={() => setSource(id as typeof source)}>{label}</button>
-          ))}
+        <div className="field" role="group" aria-labelledby="product-image-upload-label">
+          <span className="field-label" id="product-image-upload-label">上传产品地毯图<b>*</b></span>
+          <input
+            ref={productFileInputRef}
+            className="visually-hidden-file-input"
+            id="product-image-upload"
+            type="file"
+            accept={PRODUCT_IMAGE_ACCEPT}
+            tabIndex={-1}
+            aria-hidden="true"
+            disabled={!projectId || uploading}
+            onChange={onProductFileChange}
+          />
+          <button
+            className="product-file-input"
+            type="button"
+            aria-controls="product-image-upload"
+            disabled={!projectId || uploading}
+            onClick={openProductFilePicker}
+          >
+            <Upload size={18} />
+            <span>{uploading ? "正在上传并校验" : "选择 JPG、PNG 或 WebP 图片"}</span>
+          </button>
+          {error && <small className="inline-error" role="alert">{error}</small>}
         </div>
-        {source === "upload" ? (
-          <Field label="上传产品地毯图" required>
-            <label className="product-file-input">
-              <Upload size={18} />
-              <span>{uploading ? "正在上传并校验" : "选择 JPG、PNG 或 WebP 图片"}</span>
-              <input type="file" accept="image/jpeg,image/png,image/webp" disabled={!projectId || uploading} onChange={(event) => { void uploadProduct(event.target.files?.[0]); }} />
-            </label>
-            {error && <small className="inline-error">{error}</small>}
-          </Field>
-        ) : (
-          <Field label="淘宝商品链接">
-            <div className="input-action">
-              <Link2 size={18} />
-              <input defaultValue="https://detail.tmall.com/item.htm?id=745212345678" />
-              <button className="button primary small">读取商品</button>
-            </div>
-          </Field>
-        )}
         <div className="section-heading">
-          <div><strong>已导入的商品图片</strong><span>建议上传多角度清晰图，最多 8 张</span></div>
-          <button className="text-button"><Upload size={16} /> 重新上传</button>
+          <div><strong>已导入的商品图片</strong><span>当前仅支持 1 张产品地毯图，最大 20 MB</span></div>
+          <button
+            className="text-button product-upload-retry"
+            type="button"
+            aria-controls="product-image-upload"
+            disabled={!projectId || uploading}
+            onClick={openProductFilePicker}
+          ><Upload size={16} /> {uploading ? "上传中" : "重新上传"}</button>
         </div>
         <div className="source-gallery">
           {[0, 0, 0, 0].map((variant, index) => (
@@ -314,7 +345,7 @@ function SceneStep({
   productAssetId,
   productPreviewUrl,
 }: {
-  onNext: (resultUrl: string) => void;
+  onNext: () => void;
   projectId: string;
   productAssetId: string;
   productPreviewUrl?: string;
@@ -334,8 +365,9 @@ function SceneStep({
   const [templatePrompt, setTemplatePrompt] = useState("");
   const [promptState, dispatchPrompt] = useReducer(reducePromptState, initialPromptState(""));
   const [promptError, setPromptError] = useState<string>();
+  const [prototypeStatus, setPrototypeStatus] = useState<string>();
+  const [prototypeError, setPrototypeError] = useState<string>();
   const [results, setResults] = useState<GenerationResultView[]>([]);
-  const [savedCandidate, setSavedCandidate] = useState<string>();
   const generation = useGenerationJob();
 
   const parameters: SceneParameters = useMemo(() => ({
@@ -391,6 +423,26 @@ function SceneStep({
     });
   };
 
+  const prepareChatgptPrototype = async () => {
+    if (!sceneAssetId || !promptState.text.trim()) return;
+    setPrototypeStatus("正在准备 ChatGPT 原型输入图…");
+    setPrototypeError(undefined);
+    try {
+      const job = await createChatgptPrototypeJob({
+        projectId,
+        productAssetId,
+        sceneAssetId,
+        prompt: promptState.text,
+        parameters,
+      });
+      await navigator.clipboard?.writeText(job.prompt).catch(() => undefined);
+      setPrototypeStatus(`已准备：${job.inputPath}。提示词已复制，可由本机自动化脚本接管 ChatGPT。`);
+    } catch (reason) {
+      setPrototypeError(reason instanceof Error ? reason.message : "ChatGPT 原型任务准备失败");
+      setPrototypeStatus(undefined);
+    }
+  };
+
   const activeResult = results[candidate];
   return (
     <div className="work-grid scene-grid">
@@ -408,8 +460,8 @@ function SceneStep({
         {activeResult ? <img src={activeResult.resultUrl} alt="生成的地毯场景" className="hero-scene generated-scene" /> : scenePreviewUrl ? <img src={scenePreviewUrl} alt="当前场景参考" className="hero-scene generated-scene scene-reference-preview" /> : <RoomScene variant={0} className="hero-scene" />}
         <div className="generation-status">
           {generation.status === "queued" && "任务已创建，等待生成"}
-          {generation.status === "processing" && (demoMode ? "正在模拟生成流程…" : "正在替换地毯并匹配场景光线…")}
-          {generation.status === "succeeded" && (demoMode ? "示例候选图已就绪（预置插画）" : "已生成一张新候选图")}
+          {generation.status === "processing" && "正在替换地毯并匹配场景光线…"}
+          {generation.status === "succeeded" && "已生成一张新候选图"}
           {generation.error && <span className="inline-error">{generation.error}</span>}
         </div>
         <div className="scene-candidates">
@@ -419,7 +471,7 @@ function SceneStep({
             </button>
           ))}
         </div>
-        <div className="dual-actions"><button className="button secondary" disabled={generation.isRunning} onClick={generate}><RefreshCw size={17} /> 再生成一张</button><button className="button secondary" disabled={!activeResult} onClick={() => { if (demoMode && activeResult) setSavedCandidate(activeResult.id); }}><Save size={17} /> {activeResult && savedCandidate === activeResult.id ? "已保留此示例方案" : "保留此方案"}</button></div>
+        <div className="dual-actions"><button className="button secondary" disabled={generation.isRunning} onClick={generate}><RefreshCw size={17} /> 再生成一张</button><button className="button secondary" disabled={!activeResult}><Save size={17} /> 保留此方案</button></div>
       </section>
       <aside className="panel settings-panel">
         <h2>场景设置</h2>
@@ -433,14 +485,17 @@ function SceneStep({
         <Field label="补充要求（可选）"><textarea value={notes} onChange={(event) => setNotes(event.target.value)} /></Field>
         <PromptEditor templateId={templateId} text={promptState.text} dirty={promptState.dirty} onEdit={(value) => dispatchPrompt({ type: "edit", value })} onReset={() => dispatchPrompt({ type: "reset", value: templatePrompt })} />
         {promptError && <small className="inline-error">{promptError}</small>}
+        {prototypeStatus && <small className="inline-help">{prototypeStatus}</small>}
+        {prototypeError && <small className="inline-error">{prototypeError}</small>}
+        <button className="button secondary wide" disabled={!sceneAssetId || !promptState.text.trim() || generation.isRunning} onClick={() => { void prepareChatgptPrototype(); }}><WandSparkles size={17} /> ChatGPT 原型测试</button>
         <button className="button primary wide" disabled={!sceneAssetId || !promptState.text.trim() || generation.isRunning} onClick={generate}><WandSparkles size={17} /> {generation.isRunning ? "生成中" : "生成场景"}</button>
-        <button className="button primary wide" disabled={!activeResult} onClick={() => activeResult && onNext(activeResult.resultUrl)}>采用此方案，下一步 <ArrowRight size={17} /></button>
+        <button className="button primary wide" disabled={!activeResult} onClick={onNext}>采用此方案，下一步 <ArrowRight size={17} /></button>
       </aside>
     </div>
   );
 }
 
-function AdjustStep({ onComplete, resultUrl }: { onComplete: () => void; resultUrl?: string }) {
+function AdjustStep({ onComplete }: { onComplete: () => void }) {
   const [candidate, setCandidate] = useState(0);
   const [scale, setScale] = useState(65);
   const [space, setSpace] = useState(40);
@@ -466,7 +521,7 @@ function AdjustStep({ onComplete, resultUrl }: { onComplete: () => void; resultU
           <button className="active"><Move size={17} /> 移动产品</button><button><Maximize2 size={17} /> 调整大小</button><button><Crop size={17} /> 裁剪</button><button><WandSparkles size={17} /> 局部修改</button><i /><button><RotateCcw size={17} /></button>
         </div>
         <div className="canvas-wrap" style={{ filter: `brightness(${100 + brightness}%)` }}>
-          {demoMode && resultUrl && candidate === 0 ? <img src={resultUrl} className="adjust-scene" alt="采用的示例场景" /> : <RoomScene variant={candidate} className="adjust-scene" />}
+          <RoomScene variant={candidate} className="adjust-scene" />
           <div className="safe-area" style={{ inset: `${Math.max(4, 14 - space / 5)}%` }}>
             <span>1:1 安全区</span>
             <i className="handle nw" /><i className="handle ne" /><i className="handle sw" /><i className="handle se" />
@@ -491,8 +546,8 @@ function AdjustStep({ onComplete, resultUrl }: { onComplete: () => void; resultU
         <Field label="修改说明"><textarea defaultValue="优化地毯边缘清晰度，调整光线更柔和。" /></Field>
         <div className="dual-actions"><button className="button secondary">重新生成</button><button className="button secondary">保存为备选</button></div>
         <div className="delivery-box">
-          <div>{demoMode && resultUrl && candidate === 0 ? <img src={resultUrl} alt="采用的示例场景" /> : <RoomScene variant={candidate} />}<span><strong>首图交付（最终版本）</strong><small>{demoMode ? "示例插画 · 非真实生成结果" : "final_A_v3.jpg"}</small><small>{demoMode ? "体验交付流程" : "1600 × 1600 · JPG"}</small></span></div>
-          <button className="button primary wide" onClick={() => { setCompleted(true); onComplete(); }}><CheckCircle2 size={17} /> {demoMode ? (completed ? "演示流程已完成" : "完成演示流程") : (completed ? "首图已保存" : "完成并保存首图")}</button>
+          <div><RoomScene variant={candidate} /><span><strong>首图交付（最终版本）</strong><small>final_A_v3.jpg</small><small>1600 × 1600 · JPG</small></span></div>
+          <button className="button primary wide" onClick={() => { setCompleted(true); onComplete(); }}><CheckCircle2 size={17} /> {completed ? "首图已保存" : "完成并保存首图"}</button>
         </div>
       </aside>
     </div>
@@ -502,10 +557,16 @@ function AdjustStep({ onComplete, resultUrl }: { onComplete: () => void; resultU
 function Workbench({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState<WorkbenchStep>("import");
   const [projectId, setProjectId] = useState<string>();
-  const [productAssetId, setProductAssetId] = useState<string | undefined>(demoMode ? "demo-product" : undefined);
-  const [productPreviewUrl, setProductPreviewUrl] = useState<string | undefined>(demoMode ? demoProduct : undefined);
+  const [productAssetId, setProductAssetId] = useState<string>();
+  const [productPreviewUrl, setProductPreviewUrl] = useState<string>();
   const [setupError, setSetupError] = useState<string>();
-  const [adoptedResult, setAdoptedResult] = useState<string>();
+  const mountedRef = useRef(true);
+
+  const activeStep = !productAssetId && step !== "import" ? "import" : step;
+  const setAllowedStep = (nextStep: WorkbenchStep) => {
+    if (nextStep !== "import" && !productAssetId) return;
+    setStep(nextStep);
+  };
 
   useEffect(() => {
     bootstrapProject()
@@ -513,34 +574,47 @@ function Workbench({ onComplete }: { onComplete: () => void }) {
       .catch((reason) => setSetupError(reason instanceof Error ? reason.message : "项目初始化失败"));
   }, []);
 
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!productPreviewUrl) return;
+    return () => URL.revokeObjectURL(productPreviewUrl);
+  }, [productPreviewUrl]);
+
   return (
     <>
       <Topbar title="首图工作台" onNew={() => setStep("import")} onHistory={() => alert("已打开历史版本：V1、V2、V3")} />
       <main className="page workbench-page">
-        <Stepper step={step} setStep={setStep} />
-        {demoMode && <div className="info-callout">公开演示 · 已载入示例地毯。可体验导入 → 处理 → 场景参数与提示词 → 采用方案 → 首图交付。图片使用预置插画，生成过程为模拟；上传只在浏览器处理。</div>}
+        <Stepper step={activeStep} setStep={setAllowedStep} productAssetId={productAssetId} />
         {setupError && <div className="info-callout error-callout">{setupError}</div>}
-        {step === "import" && <ImportStep
-          onNext={() => setStep(getNextStep(step))}
+        {activeStep === "import" && <ImportStep
+          onNext={() => setAllowedStep(getNextStep(activeStep))}
           projectId={projectId}
           productAssetId={productAssetId}
           productPreviewUrl={productPreviewUrl}
-          onProductUploaded={(assetId, previewUrl) => {
+          onProductUploaded={(assetId, file) => {
+            if (!mountedRef.current) return;
+            const previewUrl = URL.createObjectURL(file);
             setProductAssetId(assetId);
             setProductPreviewUrl(previewUrl);
           }}
         />}
-        {step === "process" && <ProcessStep onNext={() => setStep(getNextStep(step))} />}
-        {step === "scene" && projectId && productAssetId && <SceneStep
-          onNext={(resultUrl) => { setAdoptedResult(resultUrl); setStep(getNextStep(step)); }}
+        {activeStep === "process" && <ProcessStep onNext={() => setAllowedStep(getNextStep(activeStep))} />}
+        {activeStep === "scene" && projectId && productAssetId && <SceneStep
+          onNext={() => setAllowedStep(getNextStep(activeStep))}
           projectId={projectId}
           productAssetId={productAssetId}
           productPreviewUrl={productPreviewUrl}
         />}
-        {step === "adjust" && <AdjustStep onComplete={onComplete} resultUrl={adoptedResult} />}
+        {activeStep === "adjust" && <AdjustStep onComplete={onComplete} />}
         <div className="step-footer">
-          <button className="text-button" disabled={step === "import"} onClick={() => setStep(getPreviousStep(step))}><ArrowLeft size={16} /> 上一步</button>
-          <span>{demoMode ? "演示进度仅保留在当前页面" : "工作进度会自动保存"}</span>
+          <button className="text-button" disabled={activeStep === "import"} onClick={() => setAllowedStep(getPreviousStep(activeStep))}><ArrowLeft size={16} /> 上一步</button>
+          <span>工作进度会自动保存</span>
         </div>
       </main>
     </>
@@ -591,7 +665,7 @@ function Completed() {
           {projectCards.concat(projectCards.slice(0, 2)).map((item, index) => (
             <article className="completed-card" key={`${item.name}-${index}`} onClick={() => setSelected(index)}>
               <RoomScene variant={index} />
-              <div><span className="status 已完成">已通过</span><h3>{item.name}</h3><p>{item.style} · {item.room}</p><footer><span>2026-06-{18 + index}</span><button onClick={(event) => { if (demoMode) { event.stopPropagation(); downloadDemoScene(index); } }}>下载</button></footer></div>
+              <div><span className="status 已完成">已通过</span><h3>{item.name}</h3><p>{item.style} · {item.room}</p><footer><span>2026-06-{18 + index}</span><button>下载</button></footer></div>
             </article>
           ))}
         </div>
@@ -604,7 +678,7 @@ function Completed() {
               <div className="tags"><Tag tone="green">已通过</Tag><Tag>奶油风</Tag><Tag tone="gray">客厅</Tag></div>
               <Field label="设计方向"><div className="read-box">保留原花纹与颜色，优化奶油风客厅构图。</div></Field>
               <Field label="原商品链接"><div className="link-line">detail.tmall.com/item.htm?id=7452… <ExternalLink size={15} /></div></Field>
-              <button className="button primary wide" onClick={() => demoMode ? downloadDemoScene(selected) : undefined}><CloudUpload size={17} /> {demoMode ? "下载示例插画（SVG）" : "下载最终首图"}</button>
+              <button className="button primary wide"><CloudUpload size={17} /> 下载最终首图</button>
             </aside>
           </div>
         )}
@@ -651,19 +725,32 @@ function Scenes({ useScene }: { useScene: () => void }) {
 
 export default function App() {
   const [view, setView] = useState<View>("workbench");
+  const publicDemo = import.meta.env.VITE_PORTFOLIO_DEMO === "true";
+  const [demo, setDemo] = useState(() => publicDemo || (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") !== "0"));
   const [toast, setToast] = useState("");
+  const setDemoMode = (enabled: boolean) => {
+    if (publicDemo && !enabled) { window.top!.location.href = "../../../#case-carpet"; return; }
+    const url = new URL(window.location.href);
+    if (enabled) url.searchParams.set("demo", "1");
+    else url.searchParams.set("demo", "0");
+    window.history.replaceState(null, "", url);
+    setDemo(enabled);
+    setView("workbench");
+  };
   const showToast = (message: string) => {
     setToast(message);
     window.setTimeout(() => setToast(""), 2200);
   };
   return (
-    <div className="app-shell">
-      <Sidebar view={view} setView={setView} />
+    <div className={`app-shell${demo ? " demo-mode" : ""}`}>
+      <Sidebar view={view} setView={setView} onDemo={() => setDemoMode(true)} />
       <div className="app-main">
-        {view === "workbench" && <Workbench onComplete={() => showToast(demoMode ? "演示流程已完成，可在“已完成首图”查看预置交付示例" : "首图已保存到“已完成首图”")} />}
+        {demo ? <DemoWorkspace view={view} setView={setView} onExit={() => setDemoMode(false)} /> : <>
+        {view === "workbench" && <Workbench onComplete={() => showToast("首图已保存到“已完成首图”")} />}
         {view === "projects" && <Projects openWorkbench={() => setView("workbench")} />}
         {view === "completed" && <Completed />}
         {view === "scenes" && <Scenes useScene={() => setView("workbench")} />}
+        </>}
       </div>
       {toast && <div className="toast"><CheckCircle2 size={18} />{toast}</div>}
     </div>

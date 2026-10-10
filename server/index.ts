@@ -7,6 +7,7 @@ import { createSupabaseAssetsRepository, createSupabaseAssetStorage } from "./re
 import { createSupabaseGenerationJobsRepository } from "./repositories/generation-jobs";
 import { createPromptTemplateRepository } from "./repositories/prompt-templates";
 import { createAssetService } from "./services/assets";
+import { createChatgptPrototypeService } from "./services/chatgpt-prototype";
 import { createGenerationJobService } from "./services/generation-jobs";
 import { createGenerationRunner } from "./services/generation-runner";
 
@@ -34,6 +35,13 @@ const jobs = createGenerationJobService({
   assets: assetsRepository,
   createSignedUrl: (path) => storage.createSignedUrl(path, 3600),
 });
+const chatgptPrototype = createChatgptPrototypeService({
+  jobs,
+  repository: jobsRepository,
+  assets,
+  storage,
+  bucket: config.storageBucket,
+});
 
 const app = buildApp({
   assets,
@@ -41,6 +49,7 @@ const app = buildApp({
   scenes: assets,
   prompts: createPromptTemplateRepository(supabase),
   jobs,
+  chatgptPrototype,
   schedule: (jobId) => { void runner.run(jobId); },
 });
 

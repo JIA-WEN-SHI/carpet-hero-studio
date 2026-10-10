@@ -30,8 +30,8 @@ function setup(overrides?: { claim?: GenerationJobRecord | null; editError?: Err
   };
   const assets = {
     download: vi.fn()
-      .mockResolvedValueOnce({ bytes: new Uint8Array([1]), mimeType: "image/png", filename: "product.png" })
-      .mockResolvedValueOnce({ bytes: new Uint8Array([2]), mimeType: "image/png", filename: "scene.png" }),
+      .mockResolvedValueOnce({ bytes: validPng, mimeType: "image/png", filename: "product.png" })
+      .mockResolvedValueOnce({ bytes: validPng, mimeType: "image/png", filename: "scene.png" }),
   };
   const provider: JmrImageProvider = {
     edit: overrides?.editError
@@ -61,8 +61,8 @@ describe("generation runner", () => {
     expect(assets.download).toHaveBeenNthCalledWith(1, queuedJob.productAssetId);
     expect(assets.download).toHaveBeenNthCalledWith(2, queuedJob.sceneAssetId);
     expect(provider.edit).toHaveBeenCalledWith(expect.objectContaining({
-      product: expect.objectContaining({ filename: "product.png" }),
-      scene: expect.objectContaining({ filename: "scene.png" }),
+      product: expect.objectContaining({ filename: "product-jmr.jpg", mimeType: "image/jpeg" }),
+      scene: expect.objectContaining({ filename: "scene-jmr.jpg", mimeType: "image/jpeg" }),
       prompt: queuedJob.promptSnapshot,
     }));
     expect(storage.upload).toHaveBeenCalledOnce();

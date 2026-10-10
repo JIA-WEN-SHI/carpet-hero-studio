@@ -5,9 +5,6 @@ import type {
   ScenePreset,
 } from "./types";
 
-import { demoMode, demoRequest } from "../../demo";
-const defaultRequest: typeof fetch = (input, init) => demoMode ? demoRequest(input, init) : fetch(input, init);
-
 export class ApiError extends Error {
   constructor(message: string, public readonly status: number) {
     super(message);
@@ -18,7 +15,7 @@ export class ApiError extends Error {
 async function requestJson<T>(
   url: string,
   init: RequestInit = {},
-  fetchImpl: typeof fetch = defaultRequest,
+  fetchImpl: typeof fetch = fetch,
 ): Promise<T> {
   const response = await fetchImpl(url, {
     ...init,
@@ -53,7 +50,7 @@ export function createUpload(input: {
   );
 }
 
-export async function uploadSignedFile(uploadUrl: string, file: File, fetchImpl: typeof fetch = defaultRequest) {
+export async function uploadSignedFile(uploadUrl: string, file: File, fetchImpl: typeof fetch = fetch) {
   const response = await fetchImpl(uploadUrl, {
     method: "PUT",
     headers: { "content-type": file.type, "x-upsert": "false" },
@@ -99,6 +96,20 @@ export function createGenerationJob(input: {
 }, fetchImpl?: typeof fetch) {
   return requestJson<GenerationJobView>(
     "/api/generation-jobs",
+    { method: "POST", body: JSON.stringify(input) },
+    fetchImpl,
+  );
+}
+
+export function createChatgptPrototypeJob(input: {
+  projectId: string;
+  productAssetId: string;
+  sceneAssetId: string;
+  prompt: string;
+  parameters: SceneParameters;
+}, fetchImpl?: typeof fetch) {
+  return requestJson<GenerationJobView & { inputPath: string; prompt: string }>(
+    "/api/chatgpt-prototype-jobs",
     { method: "POST", body: JSON.stringify(input) },
     fetchImpl,
   );

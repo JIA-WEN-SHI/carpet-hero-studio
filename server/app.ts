@@ -1,6 +1,7 @@
 import cors from "@fastify/cors";
 import Fastify from "fastify";
 import { registerAssetRoutes, type AssetRouteService } from "./routes/assets";
+import { registerChatgptPrototypeRoutes, type ChatgptPrototypeRouteService } from "./routes/chatgpt-prototype";
 import { registerGenerationJobRoutes, type GenerationJobRouteService } from "./routes/generation-jobs";
 import { registerProjectRoutes, type ProjectRouteService } from "./routes/projects";
 import { registerPromptRoutes, type PromptRouteService } from "./routes/prompts";
@@ -12,6 +13,7 @@ export interface AppDependencies {
   scenes: SceneRouteService;
   prompts: PromptRouteService;
   jobs: GenerationJobRouteService;
+  chatgptPrototype: ChatgptPrototypeRouteService;
   schedule(jobId: string): void;
 }
 
@@ -28,6 +30,7 @@ export function buildApp(dependencies: AppDependencies) {
   registerSceneRoutes(app, dependencies.scenes);
   registerPromptRoutes(app, dependencies.prompts);
   registerGenerationJobRoutes(app, dependencies.jobs, dependencies.schedule);
+  registerChatgptPrototypeRoutes(app, dependencies.chatgptPrototype);
 
   app.setErrorHandler((error, request, reply) => {
     request.log.error({ errorType: error instanceof Error ? error.name : "UnknownError" }, "request failed");

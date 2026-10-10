@@ -9,6 +9,7 @@ describe("API app", () => {
       scenes: { listPresets: vi.fn() },
       prompts: { saveVersion: vi.fn() },
       jobs: { create: vi.fn(), get: vi.fn(), history: vi.fn(), selectResult: vi.fn() },
+      chatgptPrototype: { prepare: vi.fn(), complete: vi.fn() },
       schedule: vi.fn(),
     });
 

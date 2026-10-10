@@ -1,0 +1,73 @@
+{
+  "createdAt": "2026-10-10",
+  "tool": "built-in image_gen",
+  "purpose": "Second batch per fixed tone. Three scenes at a time, six per tone, two batches alternate. Pre-generated offline demo; no live API.",
+  "sets": [
+    {
+      "tone": "light",
+      "batch": 2,
+      "number": 4,
+      "reference": "dark-reference-1.jpg",
+      "scene": "light-scene-4.png",
+      "fusion": "light-fusion-4.png",
+      "scenePrompt": "Edit the attached original carpet scene for a professional carpet ecommerce scene reference. One square 1:1 realistic interior photograph. Preserve the exact source camera viewpoint, carpet outline, position, rotation, scale and perspective as closely as possible; keep the carpet's original material and pattern, not the SKU black end bands. Redesign surrounding sofa, armchair, cushions, cabinets, lamps and decor into a cohesive LIGHT ivory cream upholstery, pale oak cabinetry and tables, travertine accents and bright soft natural daylight. All furniture must be light toned. Preserve structural room layout and window positions and furniture footprints. Remove ALL people, text, captions, branding, watermark, magazines, distracting laundry appliances and clutter, reconstruct clean background. For portrait source, extend horizontally to square rather than crop off carpet or change camera angle. Carpet is the clear foreground focus. No collage or typography.",
+      "fusionPrompt": "Use case: compositing. Image 1 is the interior scene edit target. Image 2 is the user's exact flat carpet SKU supporting insert. Replace ONLY the rug in image 1 with the carpet design from image 2: TWO wide charcoal-black bands at opposite short ends, a large ivory center with fine dark crosswoven texture and thin transitional dark lines. Preserve this product's proportions, colors and detailed weave; project it naturally onto the existing rug plane. Lock scene image 1 camera, carpet placement, orientation, shape, size and perspective, and keep all furniture and room unchanged. Match contact shadows and occlusion under furniture. One square 1:1 photorealistic ecommerce hero image. Do not create a second rug; no text, people, logos or watermark. Do not alter furniture or lighting.",
+      "sku": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "tone": "light",
+      "batch": 2,
+      "number": 5,
+      "reference": "dark-reference-2.jpg",
+      "scene": "light-scene-5.png",
+      "fusion": "light-fusion-5.png",
+      "scenePrompt": "Edit the attached original carpet scene for a professional carpet ecommerce scene reference. One square 1:1 realistic interior photograph. Preserve the exact source camera viewpoint, carpet outline, position, rotation, scale and perspective as closely as possible; keep the carpet's original material and pattern, not the SKU black end bands. Redesign surrounding sofa, armchair, cushions, cabinets, lamps and decor into a cohesive LIGHT ivory cream upholstery, pale oak cabinetry and tables, travertine accents and bright soft natural daylight. All furniture must be light toned. Preserve structural room layout and window positions and furniture footprints. Remove ALL people, text, captions, branding, watermark, magazines, distracting laundry appliances and clutter, reconstruct clean background. For portrait source, extend horizontally to square rather than crop off carpet or change camera angle. Carpet is the clear foreground focus. No collage or typography.",
+      "fusionPrompt": "Use case: compositing. Image 1 is the interior scene edit target. Image 2 is the user's exact flat carpet SKU supporting insert. Replace ONLY the rug in image 1 with the carpet design from image 2: TWO wide charcoal-black bands at opposite short ends, a large ivory center with fine dark crosswoven texture and thin transitional dark lines. Preserve this product's proportions, colors and detailed weave; project it naturally onto the existing rug plane. Lock scene image 1 camera, carpet placement, orientation, shape, size and perspective, and keep all furniture and room unchanged. Match contact shadows and occlusion under furniture. One square 1:1 photorealistic ecommerce hero image. Do not create a second rug; no text, people, logos or watermark. Do not alter furniture or lighting.",
+      "sku": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "tone": "light",
+      "batch": 2,
+      "number": 6,
+      "reference": "dark-reference-3.jpg",
+      "scene": "light-scene-6.png",
+      "fusion": "light-fusion-6.png",
+      "scenePrompt": "Edit the attached original carpet scene for a professional carpet ecommerce scene reference. One square 1:1 realistic interior photograph. Preserve the exact source camera viewpoint, carpet outline, position, rotation, scale and perspective as closely as possible; keep the carpet's original material and pattern, not the SKU black end bands. Redesign surrounding sofa, armchair, cushions, cabinets, lamps and decor into a cohesive LIGHT ivory cream upholstery, pale oak cabinetry and tables, travertine accents and bright soft natural daylight. All furniture must be light toned. Preserve structural room layout and window positions and furniture footprints. Remove ALL people, text, captions, branding, watermark, magazines, distracting laundry appliances and clutter, reconstruct clean background. For portrait source, extend horizontally to square rather than crop off carpet or change camera angle. Carpet is the clear foreground focus. No collage or typography.",
+      "fusionPrompt": "Use case: compositing. Image 1 is the interior scene edit target. Image 2 is the user's exact flat carpet SKU supporting insert. Replace ONLY the rug in image 1 with the carpet design from image 2: TWO wide charcoal-black bands at opposite short ends, a large ivory center with fine dark crosswoven texture and thin transitional dark lines. Preserve this product's proportions, colors and detailed weave; project it naturally onto the existing rug plane. Lock scene image 1 camera, carpet placement, orientation, shape, size and perspective, and keep all furniture and room unchanged. Match contact shadows and occlusion under furniture. One square 1:1 photorealistic ecommerce hero image. Do not create a second rug; no text, people, logos or watermark. Do not alter furniture or lighting.",
+      "sku": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "tone": "dark",
+      "batch": 2,
+      "number": 4,
+      "reference": "light-reference-1.jpg",
+      "scene": "dark-scene-4.png",
+      "fusion": "dark-fusion-4.png",
+      "scenePrompt": "Edit the attached original carpet scene for a professional carpet ecommerce scene reference. One square 1:1 realistic interior photograph. Preserve the exact source camera viewpoint, carpet outline, position, rotation, scale and perspective as closely as possible; keep the carpet's original material and pattern, not the SKU black end bands. Redesign surrounding sofa, armchair, cushions, cabinets, lamps and decor into a cohesive DARK charcoal or espresso upholstery, dark walnut cabinetry and tables, black or bronze lighting, warm controlled soft daylight. All furniture must be dark toned. Preserve structural room layout and window positions and furniture footprints. Remove ALL people, text, captions, branding, watermark, magazines, distracting laundry appliances and clutter, reconstruct clean background. For portrait source, extend horizontally to square rather than crop off carpet or change camera angle. Carpet is the clear foreground focus. No collage or typography.",
+      "fusionPrompt": "Use case: compositing. Image 1 is the interior scene edit target. Image 2 is the user's exact flat carpet SKU supporting insert. Replace ONLY the rug in image 1 with the carpet design from image 2: TWO wide charcoal-black bands at opposite short ends, a large ivory center with fine dark crosswoven texture and thin transitional dark lines. Preserve this product's proportions, colors and detailed weave; project it naturally onto the existing rug plane. Lock scene image 1 camera, carpet placement, orientation, shape, size and perspective, and keep all furniture and room unchanged. Match contact shadows and occlusion under furniture. One square 1:1 photorealistic ecommerce hero image. Do not create a second rug; no text, people, logos or watermark. Do not alter furniture or lighting.",
+      "sku": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "tone": "dark",
+      "batch": 2,
+      "number": 5,
+      "reference": "light-reference-2.jpg",
+      "scene": "dark-scene-5.png",
+      "fusion": "dark-fusion-5.png",
+      "scenePrompt": "Edit the attached original carpet scene for a professional carpet ecommerce scene reference. One square 1:1 realistic interior photograph. Preserve the exact source camera viewpoint, carpet outline, position, rotation, scale and perspective as closely as possible; keep the carpet's original material and pattern, not the SKU black end bands. Redesign surrounding sofa, armchair, cushions, cabinets, lamps and decor into a cohesive DARK charcoal or espresso upholstery, dark walnut cabinetry and tables, black or bronze lighting, warm controlled soft daylight. All furniture must be dark toned. Preserve structural room layout and window positions and furniture footprints. Remove ALL people, text, captions, branding, watermark, magazines, distracting laundry appliances and clutter, reconstruct clean background. For portrait source, extend horizontally to square rather than crop off carpet or change camera angle. Carpet is the clear foreground focus. No collage or typography.",
+      "fusionPrompt": "Use case: compositing. Image 1 is the interior scene edit target. Image 2 is the user's exact flat carpet SKU supporting insert. Replace ONLY the rug in image 1 with the carpet design from image 2: TWO wide charcoal-black bands at opposite short ends, a large ivory center with fine dark crosswoven texture and thin transitional dark lines. Preserve this product's proportions, colors and detailed weave; project it naturally onto the existing rug plane. Lock scene image 1 camera, carpet placement, orientation, shape, size and perspective, and keep all furniture and room unchanged. Match contact shadows and occlusion under furniture. One square 1:1 photorealistic ecommerce hero image. Do not create a second rug; no text, people, logos or watermark. Do not alter furniture or lighting.",
+      "sku": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "tone": "dark",
+      "batch": 2,
+      "number": 6,
+      "reference": "light-reference-3.jpg",
+      "scene": "dark-scene-6.png",
+      "fusion": "dark-fusion-6.png",
+      "scenePrompt": "Edit the attached original carpet scene for a professional carpet ecommerce scene reference. One square 1:1 realistic interior photograph. Preserve the exact source camera viewpoint, carpet outline, position, rotation, scale and perspective as closely as possible; keep the carpet's original material and pattern, not the SKU black end bands. Redesign surrounding sofa, armchair, cushions, cabinets, lamps and decor into a cohesive DARK charcoal or espresso upholstery, dark walnut cabinetry and tables, black or bronze lighting, warm controlled soft daylight. All furniture must be dark toned. Preserve structural room layout and window positions and furniture footprints. Remove ALL people, text, captions, branding, watermark, magazines, distracting laundry appliances and clutter, reconstruct clean background. For portrait source, extend horizontally to square rather than crop off carpet or change camera angle. Carpet is the clear foreground focus. No collage or typography.",
+      "fusionPrompt": "Use case: compositing. Image 1 is the interior scene edit target. Image 2 is the user's exact flat carpet SKU supporting insert. Replace ONLY the rug in image 1 with the carpet design from image 2: TWO wide charcoal-black bands at opposite short ends, a large ivory center with fine dark crosswoven texture and thin transitional dark lines. Preserve this product's proportions, colors and detailed weave; project it naturally onto the existing rug plane. Lock scene image 1 camera, carpet placement, orientation, shape, size and perspective, and keep all furniture and room unchanged. Match contact shadows and occlusion under furniture. One square 1:1 photorealistic ecommerce hero image. Do not create a second rug; no text, people, logos or watermark. Do not alter furniture or lighting.",
+      "sku": "/demo/user-33/own-sku-1.png"
+    }
+  ]
+}

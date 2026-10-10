@@ -3,6 +3,7 @@ import sharp from "sharp";
 import type { GenerationStatus } from "../domain/types";
 import { sanitizeError } from "../lib/sanitize-error";
 import type { JmrImageProvider } from "../providers/jmr-image";
+import { prepareJmrInputImage } from "./jmr-input-image";
 
 export interface GenerationJobRecord {
   id: string;
@@ -58,8 +59,8 @@ export function createGenerationRunner(options: {
     if (!job) return;
     const startedAt = now();
     try {
-      const product = await options.assets.download(job.productAssetId);
-      const scene = await options.assets.download(job.sceneAssetId);
+      const product = await prepareJmrInputImage(await options.assets.download(job.productAssetId));
+      const scene = await prepareJmrInputImage(await options.assets.download(job.sceneAssetId));
       const output = await options.provider.edit({ product, scene, prompt: job.promptSnapshot });
       const metadata = await sharp(output.bytes).metadata();
       if (!metadata.width || !metadata.height || !metadata.format || !["png", "jpeg", "webp"].includes(metadata.format)) {

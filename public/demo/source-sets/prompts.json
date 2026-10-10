@@ -1,0 +1,71 @@
+{
+  "createdAt": "2026-10-10",
+  "tool": "built-in image_gen",
+  "purpose": "Two chosen upload examples; six geometry-specific edited scenes and matching SKU01 fusions. Offline demo, no live API.",
+  "uploadReferences": {
+    "dark": "51eeb958ecee9ce30a3b5d83e4182418.jpg",
+    "light": "db087eba82c8fa0863a03e5ef9d2d2d5.jpg"
+  },
+  "sets": [
+    {
+      "key": "dark-1",
+      "original": "22/所有主图案例/51eeb958ecee9ce30a3b5d83e4182418.jpg",
+      "reference": "dark-reference-1.jpg",
+      "scene": "dark-scene-1.png",
+      "fusion": "dark-fusion-1.png",
+      "scenePrompt": "Edit this exact reference photo (51eeb958ecee9ce30a3b5d83e4182418.jpg) for a carpet ecommerce scene template. Output ONE square 1:1 photorealistic photo. Preserve its original camera angle, viewpoint, rug position, outline, perspective, proportions, and composition as closely as possible. This is NOT a request for a new camera angle. Retain the source rug's existing color/pattern/material; do not insert black stripes yet. Replace surrounding furniture, cushions, lamps and small objects with cohesive DARK MODERN interior: different sophisticated charcoal black leather sofa designs, walnut side tables and cabinetry, restrained bronze or black lamps, textured cushions, warm soft directional light. Coordinate all furnishings. Retain room structural layout, wall/window placement, and main furniture footprints; remove distracting appliances, magazines and bright red clutter. Remove all text, promotional lettering, logos and people, reconstruct clean background. If portrait input, adapt to square by extending side context while keeping rug perspective, don't rotate camera or crop off rug just to fit. Make furniture visibly redesigned, not only recolored. No collage, no watermark, no extra rug.",
+      "fusionPrompt": "Image 1 is the scene to edit. Image 2 is the user's carpet SKU. Replace ONLY the carpet in image 1 using the exact pattern of image 2: two broad charcoal-black bands at opposite short ends, a large ivory woven center and thin fine dark lines at the transitions. Match rug outline, position, orientation, perspective and size in image 1, mapping the pattern naturally onto it. Keep every other pixel as unchanged as possible: same furniture, lighting, camera and composition. Preserve realistic contact shadows and furniture occlusion, fine textile weave. Do not change room, do not add another rug, do not rotate camera. One 1:1 square realistic ecommerce hero image. No text, watermark, people or collage.",
+      "fusionProduct": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "key": "dark-2",
+      "original": "22/所有主图案例/3518b7b4d60068ac860a68c7c070aab9.jpg",
+      "reference": "dark-reference-2.jpg",
+      "scene": "dark-scene-2.png",
+      "fusion": "dark-fusion-2.png",
+      "scenePrompt": "Edit this exact reference photo (3518b7b4d60068ac860a68c7c070aab9.jpg) for a carpet ecommerce scene template. Output ONE square 1:1 photorealistic photo. Preserve its original camera angle, viewpoint, rug position, outline, perspective, proportions, and composition as closely as possible. This is NOT a request for a new camera angle. Retain the source rug's existing color/pattern/material; do not insert black stripes yet. Replace surrounding furniture, cushions, lamps and small objects with cohesive DARK MODERN interior: different sophisticated charcoal black leather sofa designs, walnut side tables and cabinetry, restrained bronze or black lamps, textured cushions, warm soft directional light. Coordinate all furnishings. Retain room structural layout, wall/window placement, and main furniture footprints; remove distracting appliances, magazines and bright red clutter. Remove all text, promotional lettering, logos and people, reconstruct clean background. If portrait input, adapt to square by extending side context while keeping rug perspective, don't rotate camera or crop off rug just to fit. Make furniture visibly redesigned, not only recolored. No collage, no watermark, no extra rug.",
+      "fusionPrompt": "Image 1 is the scene to edit. Image 2 is the user's carpet SKU. Replace ONLY the carpet in image 1 using the exact pattern of image 2: two broad charcoal-black bands at opposite short ends, a large ivory woven center and thin fine dark lines at the transitions. Match rug outline, position, orientation, perspective and size in image 1, mapping the pattern naturally onto it. Keep every other pixel as unchanged as possible: same furniture, lighting, camera and composition. Preserve realistic contact shadows and furniture occlusion, fine textile weave. Do not change room, do not add another rug, do not rotate camera. One 1:1 square realistic ecommerce hero image. No text, watermark, people or collage.",
+      "fusionProduct": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "key": "dark-3",
+      "original": "22/所有主图案例/90b2b0e2716eec48a0b90d1a5ee6880b.jpg",
+      "reference": "dark-reference-3.jpg",
+      "scene": "dark-scene-3.png",
+      "fusion": "dark-fusion-3.png",
+      "scenePrompt": "Edit this exact reference photo (90b2b0e2716eec48a0b90d1a5ee6880b.jpg) for a carpet ecommerce scene template. Output ONE square 1:1 photorealistic photo. Preserve its original camera angle, viewpoint, rug position, outline, perspective, proportions, and composition as closely as possible. This is NOT a request for a new camera angle. Retain the source rug's existing color/pattern/material; do not insert black stripes yet. Replace surrounding furniture, cushions, lamps and small objects with cohesive DARK MODERN interior: different sophisticated charcoal black leather sofa designs, walnut side tables and cabinetry, restrained bronze or black lamps, textured cushions, warm soft directional light. Coordinate all furnishings. Retain room structural layout, wall/window placement, and main furniture footprints; remove distracting appliances, magazines and bright red clutter. Remove all text, promotional lettering, logos and people, reconstruct clean background. If portrait input, adapt to square by extending side context while keeping rug perspective, don't rotate camera or crop off rug just to fit. Make furniture visibly redesigned, not only recolored. No collage, no watermark, no extra rug.",
+      "fusionPrompt": "Image 1 is the scene to edit. Image 2 is the user's carpet SKU. Replace ONLY the carpet in image 1 using the exact pattern of image 2: two broad charcoal-black bands at opposite short ends, a large ivory woven center and thin fine dark lines at the transitions. Match rug outline, position, orientation, perspective and size in image 1, mapping the pattern naturally onto it. Keep every other pixel as unchanged as possible: same furniture, lighting, camera and composition. Preserve realistic contact shadows and furniture occlusion, fine textile weave. Do not change room, do not add another rug, do not rotate camera. One 1:1 square realistic ecommerce hero image. No text, watermark, people or collage.",
+      "fusionProduct": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "key": "light-1",
+      "original": "22/所有主图案例/db087eba82c8fa0863a03e5ef9d2d2d5.jpg",
+      "reference": "light-reference-1.jpg",
+      "scene": "light-scene-1.png",
+      "fusion": "light-fusion-1.png",
+      "scenePrompt": "Edit this exact reference photo (db087eba82c8fa0863a03e5ef9d2d2d5.jpg) for a carpet ecommerce scene template. Output ONE square 1:1 photorealistic photo. Preserve its original camera angle, viewpoint, rug position, outline, perspective, proportions, and composition as closely as possible. This is NOT a request for a new camera angle. Retain the source rug's existing color/pattern/material; do not insert black stripes yet. Replace surrounding furniture, cushions, lamps and small objects with cohesive LIGHT CREAM interior: different rounded ivory boucle sofa designs, pale oak side tables and cabinetry, cream ceramic accessories, soft beige textiles, warm diffuse daylight. Coordinate all furnishings. Retain room structural layout, wall/window placement, and main furniture footprints; remove distracting appliances, magazines and bright red clutter. Remove all text, promotional lettering, logos and people, reconstruct clean background. If portrait input, adapt to square by extending side context while keeping rug perspective, don't rotate camera or crop off rug just to fit. Make furniture visibly redesigned, not only recolored. No collage, no watermark, no extra rug.",
+      "fusionPrompt": "Image 1 is the scene to edit. Image 2 is the user's carpet SKU. Replace ONLY the carpet in image 1 using the exact pattern of image 2: two broad charcoal-black bands at opposite short ends, a large ivory woven center and thin fine dark lines at the transitions. Match rug outline, position, orientation, perspective and size in image 1, mapping the pattern naturally onto it. Keep every other pixel as unchanged as possible: same furniture, lighting, camera and composition. Preserve realistic contact shadows and furniture occlusion, fine textile weave. Do not change room, do not add another rug, do not rotate camera. One 1:1 square realistic ecommerce hero image. No text, watermark, people or collage.",
+      "fusionProduct": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "key": "light-2",
+      "original": "22/所有主图案例/8910a5f526b3746e2ce37c69b299ea71.jpg",
+      "reference": "light-reference-2.jpg",
+      "scene": "light-scene-2.png",
+      "fusion": "light-fusion-2.png",
+      "scenePrompt": "Edit this exact reference photo (8910a5f526b3746e2ce37c69b299ea71.jpg) for a carpet ecommerce scene template. Output ONE square 1:1 photorealistic photo. Preserve its original camera angle, viewpoint, rug position, outline, perspective, proportions, and composition as closely as possible. This is NOT a request for a new camera angle. Retain the source rug's existing color/pattern/material; do not insert black stripes yet. Replace surrounding furniture, cushions, lamps and small objects with cohesive LIGHT CREAM interior: different rounded ivory boucle sofa designs, pale oak side tables and cabinetry, cream ceramic accessories, soft beige textiles, warm diffuse daylight. Coordinate all furnishings. Retain room structural layout, wall/window placement, and main furniture footprints; remove distracting appliances, magazines and bright red clutter. Remove all text, promotional lettering, logos and people, reconstruct clean background. If portrait input, adapt to square by extending side context while keeping rug perspective, don't rotate camera or crop off rug just to fit. Make furniture visibly redesigned, not only recolored. No collage, no watermark, no extra rug.",
+      "fusionPrompt": "Image 1 is the scene to edit. Image 2 is the user's carpet SKU. Replace ONLY the carpet in image 1 using the exact pattern of image 2: two broad charcoal-black bands at opposite short ends, a large ivory woven center and thin fine dark lines at the transitions. Match rug outline, position, orientation, perspective and size in image 1, mapping the pattern naturally onto it. Keep every other pixel as unchanged as possible: same furniture, lighting, camera and composition. Preserve realistic contact shadows and furniture occlusion, fine textile weave. Do not change room, do not add another rug, do not rotate camera. One 1:1 square realistic ecommerce hero image. No text, watermark, people or collage.",
+      "fusionProduct": "/demo/user-33/own-sku-1.png"
+    },
+    {
+      "key": "light-3",
+      "original": "22/所有主图案例/8eededf1c40dbcc04efca20a63bb39f6.jpg",
+      "reference": "light-reference-3.jpg",
+      "scene": "light-scene-3.png",
+      "fusion": "light-fusion-3.png",
+      "scenePrompt": "Edit this exact reference photo (8eededf1c40dbcc04efca20a63bb39f6.jpg) for a carpet ecommerce scene template. Output ONE square 1:1 photorealistic photo. Preserve its original camera angle, viewpoint, rug position, outline, perspective, proportions, and composition as closely as possible. This is NOT a request for a new camera angle. Retain the source rug's existing color/pattern/material; do not insert black stripes yet. Replace surrounding furniture, cushions, lamps and small objects with cohesive LIGHT CREAM interior: different rounded ivory boucle sofa designs, pale oak side tables and cabinetry, cream ceramic accessories, soft beige textiles, warm diffuse daylight. Coordinate all furnishings. Retain room structural layout, wall/window placement, and main furniture footprints; remove distracting appliances, magazines and bright red clutter. Remove all text, promotional lettering, logos and people, reconstruct clean background. If portrait input, adapt to square by extending side context while keeping rug perspective, don't rotate camera or crop off rug just to fit. Make furniture visibly redesigned, not only recolored. No collage, no watermark, no extra rug.",
+      "fusionPrompt": "Image 1 is the scene to edit. Image 2 is the user's carpet SKU. Replace ONLY the carpet in image 1 using the exact pattern of image 2: two broad charcoal-black bands at opposite short ends, a large ivory woven center and thin fine dark lines at the transitions. Match rug outline, position, orientation, perspective and size in image 1, mapping the pattern naturally onto it. Keep every other pixel as unchanged as possible: same furniture, lighting, camera and composition. Preserve realistic contact shadows and furniture occlusion, fine textile weave. Do not change room, do not add another rug, do not rotate camera. One 1:1 square realistic ecommerce hero image. No text, watermark, people or collage.",
+      "fusionProduct": "/demo/user-33/own-sku-1.png"
+    }
+  ]
+}

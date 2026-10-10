@@ -130,6 +130,7 @@ export function createSupabaseGenerationJobsRepository(supabase: SupabaseAdmin):
       const { data, error } = await supabase.from("generation_results")
         .select("id,job_id,is_selected,asset:assets!generation_results_asset_id_fkey(object_path),job:generation_jobs!inner(project_id)")
         .eq("job.project_id", projectId)
+        .eq("job.status", "succeeded")
         .order("created_at", { ascending: false });
       throwIfError(error);
       return (data ?? []).map((row) => {

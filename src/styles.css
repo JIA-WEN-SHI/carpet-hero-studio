@@ -56,6 +56,7 @@ svg { display: block; }
 .icon-button { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); background: white; display: grid; place-items: center; cursor: pointer; }
 .text-button { border: 0; background: none; display: inline-flex; align-items: center; gap: 6px; color: var(--primary); cursor: pointer; }
 .text-button:disabled { opacity: .35; cursor: default; }
+.product-file-input:disabled, .product-upload-retry:disabled { opacity: .55; cursor: wait; }
 
 .page { padding: 22px 26px 32px; }
 .workbench-page { padding-top: 18px; }
@@ -184,10 +185,11 @@ textarea { width: 100%; min-height: 66px; padding: 11px; resize: vertical; line-
 .scene-reference-grid img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
 .scene-reference-grid button span { display: block; padding: 6px 4px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .scene-upload-tile { min-height: 92px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
-.scene-upload-tile input, .product-file-input input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.scene-upload-tile input, .visually-hidden-file-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .scene-upload-tile.disabled { opacity: .55; cursor: wait; }
 .inline-error { display: block; margin-top: 6px; color: #b42318; line-height: 1.4; }
-.product-file-input { position: relative; min-height: 74px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px dashed #aeb8cb; border-radius: 9px; color: var(--primary); background: #f8faff; cursor: pointer; }
+.inline-help { display: block; margin-top: 6px; color: var(--muted); line-height: 1.5; word-break: break-all; }
+.product-file-input { position: relative; width: 100%; min-height: 74px; padding: 0; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px dashed #aeb8cb; border-radius: 9px; color: var(--primary); background: #f8faff; cursor: pointer; font: inherit; }
 .source-photo img, .clean-carpet img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .settings-panel select { width: 100%; min-height: 40px; padding: 0 34px 0 11px; border: 1px solid #dde2eb; border-radius: 8px; background: #fff; color: #253047; }
 .prompt-editor { margin: 14px 0; padding: 12px; border: 1px solid #d9e1f1; border-radius: 10px; background: #f8faff; }
@@ -278,10 +280,20 @@ textarea { width: 100%; min-height: 66px; padding: 11px; resize: vertical; line-
 .completed-card, .scene-card { overflow: hidden; border: 1px solid var(--line); border-radius: 11px; background: white; box-shadow: var(--shadow); cursor: pointer; transition: .2s; }
 .completed-card:hover, .scene-card:hover, .project-card:hover { translate: 0 -2px; box-shadow: 0 15px 38px rgba(36,49,81,.09); }
 .completed-card > svg, .scene-card > svg { width: 100%; background: #ece2d5; }
+.completed-card-open { width: 100%; padding: 0; border: 0; display: block; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.completed-card-open > img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: #ece2d5; }
+.completed-card-open > div { padding: 12px; }
 .completed-card > div, .scene-card > div { padding: 12px; }
 .completed-card h3, .scene-card h3 { margin: 8px 0 4px; font-size: 13px; }
 .completed-card p, .scene-card p { margin: 0; color: var(--muted); font-size: 10px; }
 .completed-card footer, .scene-card footer { display: flex; justify-content: space-between; align-items: center; margin-top: 11px; color: #99a2b1; font-size: 9px; }
+.completed-card footer { margin-top: 0; padding: 0 12px 12px; }
+.completed-card footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+.completed-card-open:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.completed-state { min-height: 220px; display: grid; place-items: center; gap: 12px; color: var(--muted); background: white; border: 1px dashed var(--line); border-radius: 12px; }
+.completed-state.error-callout { color: #b42318; border-style: solid; }
+.completed-state button { border: 0; border-radius: 8px; padding: 8px 14px; color: white; background: var(--primary); cursor: pointer; }
+.detail-drawer .drawer-image { aspect-ratio: 1; object-fit: cover; display: block; }
 .drawer-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(24,34,52,.26); backdrop-filter: blur(2px); }
 .detail-drawer { position: absolute; right: 0; top: 0; bottom: 0; width: 430px; padding: 22px; overflow-y: auto; background: white; box-shadow: -15px 0 45px rgba(28,41,69,.15); }
 .drawer-image { width: 100%; border-radius: 9px; margin-bottom: 15px; }
